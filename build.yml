@@ -1,0 +1,35 @@
+name: Build AutoClicker Pro .exe
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: python -m pip install pynput pyautogui pywin32 pyinstaller psutil
+
+      - name: Compilar .exe
+        run: |
+          python -m PyInstaller --onefile --windowed --name "AutoClicker Pro" `
+            --hidden-import=pynput.keyboard._win32 `
+            --hidden-import=pynput.mouse._win32 `
+            autoclicker.py
+
+      - name: Publicar .exe como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoClicker-Pro
+          path: dist/AutoClicker Pro.exe
