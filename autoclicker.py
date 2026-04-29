@@ -4,7 +4,7 @@ import threading
 import time
 import psutil
 
-# Tenta importar pynput e pyautogui (necessários no Windows)
+# Tenta importar pynput e pyautogui
 try:
     import pynput.mouse as pmouse
     import pynput.keyboard as pkeyboard
@@ -13,7 +13,7 @@ try:
 except ImportError:
     LIBS_OK = False
 
-# ── Tentativa de importar win32 (funciona só no Windows) ──────────────────────
+# ── Tentativa de importar win32
 try:
     import win32gui
     import win32process
@@ -22,9 +22,9 @@ except ImportError:
     WIN32_OK = False
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 #  Helpers
-# ══════════════════════════════════════════════════════════════════════════════
+
 
 def get_open_windows():
     """Retorna lista de (hwnd, titulo, pid, nome_processo)."""
@@ -53,16 +53,16 @@ def get_foreground_hwnd():
     return None
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 #  AutoClicker engine
-# ══════════════════════════════════════════════════════════════════════════════
+
 
 class AutoClickerEngine:
     def __init__(self):
         self.running = False
         self._thread = None
 
-    # ── Conversores ──────────────────────────────────────────────────────────
+    #  Conversores 
 
     def _parse_interval(self, horas, minutos, segundos, milissegundos):
         return (int(horas) * 3600 + int(minutos) * 60 +
@@ -94,7 +94,7 @@ class AutoClickerEngine:
         k = key_str.strip().lower()
         return special.get(k, pkeyboard.KeyCode.from_char(k))
 
-    # ── Loop principal ───────────────────────────────────────────────────────
+    #  Loop principal 
 
     def _loop(self, action, interval, target_hwnd, repeat, repeat_count, callback_status):
         mouse_ctrl = pmouse.Controller() if LIBS_OK else None
@@ -156,9 +156,7 @@ class AutoClickerEngine:
         self.running = False
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 #  Interface gráfica
-# ══════════════════════════════════════════════════════════════════════════════
 
 class App(tk.Tk):
     COLORS = {
@@ -198,7 +196,7 @@ class App(tk.Tk):
                 "Para filtrar por aba instale pywin32:\n\npip install pywin32"
             )
 
-    # ── Construção da UI ─────────────────────────────────────────────────────
+    #  Construção da UI 
 
     def _build_ui(self):
         C = self.COLORS
@@ -216,7 +214,7 @@ class App(tk.Tk):
         sep = tk.Frame(self, bg=C["border"], height=1)
         sep.pack(fill="x", padx=18, pady=4)
 
-        # ── Ação ──────────────────────────────────────────────────────────
+        #  Ação 
         self._section("AÇÃO")
         action_frame = self._panel()
 
@@ -254,7 +252,7 @@ class App(tk.Tk):
         self.key_row = (action_frame, 1)
         self._on_action_change()
 
-        # ── Intervalo ─────────────────────────────────────────────────────
+        #  Intervalo 
         self._section("INTERVALO")
         iv = self._panel()
 
@@ -271,7 +269,7 @@ class App(tk.Tk):
                          insertbackground=C["accent"], relief="flat", bd=4)
             e.grid(row=0, column=i*2+1, padx=(0, 6), pady=8)
 
-        # ── Repetição ─────────────────────────────────────────────────────
+        #  Repetição 
         self._section("REPETIÇÃO")
         rep = self._panel()
 
@@ -296,7 +294,7 @@ class App(tk.Tk):
         tk.Label(rep, text="vezes", bg=C["panel"], fg=C["subtext"],
                  font=("Consolas", 10)).grid(row=0, column=3, padx=(0,10))
 
-        # ── Janela alvo ────────────────────────────────────────────────────
+        #  Janela alvo 
         self._section("JANELA ALVO")
         wf = self._panel()
 
@@ -379,7 +377,7 @@ class App(tk.Tk):
                         bordercolor=C["border"],
                         arrowcolor=C["accent"])
 
-    # ── Eventos UI ────────────────────────────────────────────────────────────
+    #  Eventos UI 
 
     def _on_action_change(self, *_):
         label = self.action_combo.get()
@@ -404,7 +402,7 @@ class App(tk.Tk):
         if self._window_map:
             self.window_combo.current(0)
 
-    # ── Hotkey ────────────────────────────────────────────────────────────────
+    #  Hotkey 
 
     def _setup_hotkey(self):
         if not LIBS_OK:
@@ -416,7 +414,7 @@ class App(tk.Tk):
         self.hotkey_listener.daemon = True
         self.hotkey_listener.start()
 
-    # ── Controles ─────────────────────────────────────────────────────────────
+    #  Controles
 
     def _get_action(self):
         atype = self.action_var.get()
